@@ -1,0 +1,30 @@
+{
+  "name": "LiveRamp GPG Decryption", 
+  "parameters": [
+    {
+      "helpText": "Path of the file pattern glob to read from. ex: gs://com-liveramp-eu-sftp/shakespheare/kinglear.txt", 
+      "name": "inputPath", 
+      "label": "Input GCS file", 
+      "regexes": [
+        "^gs:\\/\\/[^\\n\\r]+$"
+      ]
+    }, 
+    {
+      "helpText": "Path and filename prefix for writing output files. ex: gs://MyBucket/counts", 
+      "name": "outputPath", 
+      "label": "Output GCS file", 
+      "regexes": [
+        "^gs:\\/\\/[^\\n\\r]+$"
+      ]
+    },
+    {
+      "helpText": "Valid modes for job: production ",
+      "name": "mode",
+      "label": "Job Mode",
+      "regexes": [
+        "^production$"
+      ]
+    }
+  ], 
+  "description": "A decryption pipeline that decrypts gpg encrypted files using the LiveRamp public gpg key."
+}
