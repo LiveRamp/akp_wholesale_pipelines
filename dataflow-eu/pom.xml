@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.liveramp</groupId>
+    <artifactId>eu_ingestion</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
 
   <groupId>com.liveramp.eu_ingestion</groupId>
   <artifactId>dataflow-eu</artifactId>
@@ -14,8 +20,6 @@
     <checkstyle.fail.on.violation>true</checkstyle.fail.on.violation>
     <bigtable.version>1.14.0</bigtable.version>
     <skip.jenkins.artifact.clean>true</skip.jenkins.artifact.clean>
-    <beam.version>2.22.0</beam.version>
-    <guava.version>27.0-jre</guava.version>
   </properties>
 
   <dependencies>
@@ -208,8 +212,8 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-            <groupId>org.apache.hbase</groupId>
-            <artifactId>hbase-client</artifactId>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-client</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -231,7 +235,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.16</version>
             <configuration>
-              <skipTests>${skipTests}</skipTests>
+              <skipTests>false</skipTests>
               <includes>**/DataflowEuTestSuite.class</includes>
               <redirectTestOutputToFile>true</redirectTestOutputToFile>
               <argLine>${surefire.arg.line}</argLine>
@@ -260,7 +264,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.16</version>
         <configuration>
-          <skipTests>${skipTests}</skipTests>
+          <skipTests>false</skipTests>
           <includes>**/DataflowEuTestSuiteLocal.class</includes>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <argLine>${surefire.arg.line}</argLine>
