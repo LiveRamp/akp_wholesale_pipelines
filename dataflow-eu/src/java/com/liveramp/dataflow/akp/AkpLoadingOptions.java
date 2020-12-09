@@ -33,4 +33,22 @@ public interface AkpLoadingOptions extends PipelineOptions {
   ValueProvider<String> getPreferredPelKey();
 
   void setPreferredPelKey(ValueProvider<String> value);
+
+  @Validation.Required
+  @Description("BigTable instance where data will be loaded into table")
+  ValueProvider<String> getBigtableInstance();
+
+  void setBigtableInstance(ValueProvider<String> value);
+
+  @Validation.Required
+  @Description("Table name for arl_diff")
+  ValueProvider<String> getArlDiffTable();
+
+  void setArlDiffTable(ValueProvider<String> value);
+
+  @Validation.Required
+  @Description("Table name for arl_pel")
+  ValueProvider<String> getArlPelTable();
+
+  void setgetArlPelTable(ValueProvider<String> value);
 }

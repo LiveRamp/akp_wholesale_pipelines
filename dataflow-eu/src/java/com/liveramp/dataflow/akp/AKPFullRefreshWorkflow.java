@@ -35,13 +35,13 @@ public class AKPFullRefreshWorkflow {
 
     //Scan with prefix(ANA)
     PCollection<byte[]> rowKey = pipeline.apply(Create.of("Start"))
-        .apply("Scan Prefix", ParDo.of(new ScanPrefixDoFn(options.getAnaId(), AKPHelper.arlDiffConfig)));
+        .apply("Scan Prefix", ParDo.of(new ScanPrefixDoFn(options.getAnaId(), AKPHelper.getArlDiffBigtableConfig(options))));
     //Delete from interface table
     rowKey.apply("Generate ARL Mutation", ParDo.of(new GenerateMutationForArlToPelTableDoFn(arlTranslatorSupplier)))
-        .apply("Delete ARL Row", CloudBigtableIO.writeToTable(AKPHelper.arlPelConfig));
+        .apply("Delete ARL Row", CloudBigtableIO.writeToTable(AKPHelper.getArlPelBigtableConfig(options)));
     //Delete from cid table
     rowKey.apply("Generate CID Mutation", ParDo.of(new GenerateMutationForArlDiffTableDoFn()))
-        .apply("Delete CID Row", CloudBigtableIO.writeToTable(AKPHelper.arlDiffConfig));
+        .apply("Delete CID Row", CloudBigtableIO.writeToTable(AKPHelper.getArlDiffBigtableConfig(options)));
 
     PCollection<String> lines = pipeline.apply("Read Lines", TextIO.read().from(options.getInputFile()));
     PCollection<KV<String, String>> processData = lines.apply("Wait Delete", Wait.on(rowKey))

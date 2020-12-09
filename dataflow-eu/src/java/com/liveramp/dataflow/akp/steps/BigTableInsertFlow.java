@@ -18,10 +18,10 @@ public class BigTableInsertFlow {
       Supplier<CustomIdToArlTranslator> arlTranslatorSupplier, Pipeline pipeline,
       PCollection<KV<String, String>> processData, AkpLoadingOptions options) {
     processData.apply("Generate CID Mutation", ParDo.of(new WriteToArlDiffTableFn(options.getAnaId())))
-        .apply("Write To CID BigTable", CloudBigtableIO.writeToTable(AKPHelper.arlDiffConfig));
+        .apply("Write To CID BigTable", CloudBigtableIO.writeToTable(AKPHelper.getArlDiffBigtableConfig(options)));
     processData
         .apply("Generate ARL Mutation", ParDo.of(new WriteToArlToPelTableFn(arlTranslatorSupplier, options.getAnaId())))
-        .apply("Write To ARL BigTable", CloudBigtableIO.writeToTable(AKPHelper.arlPelConfig));
+        .apply("Write To ARL BigTable", CloudBigtableIO.writeToTable(AKPHelper.getArlPelBigtableConfig(options)));
     pipeline.run();
   }
 }
