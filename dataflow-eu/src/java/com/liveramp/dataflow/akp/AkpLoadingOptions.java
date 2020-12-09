@@ -50,5 +50,5 @@ public interface AkpLoadingOptions extends PipelineOptions {
   @Description("Table name for arl_pel")
   ValueProvider<String> getArlPelTable();
 
-  void setgetArlPelTable(ValueProvider<String> value);
+  void setArlPelTable(ValueProvider<String> value);
 }
