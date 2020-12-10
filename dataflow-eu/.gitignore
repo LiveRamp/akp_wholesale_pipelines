@@ -4,3 +4,4 @@ target/
 .mvn/
 **/*.iml
 **/*.log
+.github
