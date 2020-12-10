@@ -1,10 +1,8 @@
 package com.liveramp.dataflow.akp;
 
 import org.apache.beam.runners.dataflow.options.DataflowPipelineOptions;
-import org.apache.beam.sdk.extensions.gcp.options.GcpOptions;
 import org.apache.beam.sdk.options.Default;
 import org.apache.beam.sdk.options.Description;
-import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.Validation;
 import org.apache.beam.sdk.options.ValueProvider;
 
@@ -38,21 +36,18 @@ public interface AkpLoadingOptions extends DataflowPipelineOptions {
 
   @Validation.Required
   @Description("BigTable instance where data will be loaded into table")
-  @Default.String(AKPHelper.INSTANCE_ID)
   ValueProvider<String> getBigtableInstance();
 
   void setBigtableInstance(ValueProvider<String> value);
 
   @Validation.Required
   @Description("Table name for arl_diff")
-  @Default.String(AKPHelper.ARL_DIFF_TABLE)
   ValueProvider<String> getArlDiffTable();
 
   void setArlDiffTable(ValueProvider<String> value);
 
   @Validation.Required
   @Description("Table name for arl_pel")
-  @Default.String(AKPHelper.ARL_PEL_TABLE)
   ValueProvider<String> getArlPelTable();
 
   void setArlPelTable(ValueProvider<String> value);
@@ -60,7 +55,6 @@ public interface AkpLoadingOptions extends DataflowPipelineOptions {
 
   @Validation.Required
   @Description("Project name to run job")
-  @Default.String(AKPHelper.PROJECT_ID)
   ValueProvider<String> getProjectId();
 
   void setProjectId(ValueProvider<String> value);
