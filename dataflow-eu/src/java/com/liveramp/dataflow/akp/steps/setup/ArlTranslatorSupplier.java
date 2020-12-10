@@ -24,7 +24,6 @@ public class ArlTranslatorSupplier implements Supplier<CustomIdToArlTranslator>,
 
   @Override
   public CustomIdToArlTranslator get() {
-    Map<String, String> secrets = EuSecretGroups.buildSecretMap(TRANSLATOR_SECRETS);
     String salt = secretProvider.get(ARL_KEY_NAME);
     return new CustomIdToArlTranslator(salt);
   }
