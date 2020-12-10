@@ -3,6 +3,7 @@ package com.liveramp.dataflow.akp;
 import java.util.function.Supplier;
 
 import com.google.cloud.bigtable.beam.CloudBigtableIO;
+import com.liveramp.ingestion.secret.SecretProvider;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
@@ -22,9 +23,8 @@ import com.liveramp.dataflow.common.AKPHelper;
 import com.liveramp.translation_zone_hashing.CustomIdToArlTranslator;
 
 public class AKPFullRefreshWorkflow {
-
-  private static Supplier<CustomIdToArlTranslator> arlTranslatorSupplier = new ArlTranslatorSupplier();
-
+  private static final SecretProvider secretProvider = new SecretProvider(false);
+  private static final Supplier<CustomIdToArlTranslator> arlTranslatorSupplier = new ArlTranslatorSupplier(secretProvider);
   public static void main(String[] args) {
 
     AkpLoadingOptions options = PipelineOptionsFactory.fromArgs(args)
