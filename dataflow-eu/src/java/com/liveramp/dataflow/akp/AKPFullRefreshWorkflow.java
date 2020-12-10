@@ -2,9 +2,13 @@ package com.liveramp.dataflow.akp;
 
 import java.util.function.Supplier;
 
+import com.google.cloud.bigtable.beam.CloudBigtableConfiguration;
 import com.google.cloud.bigtable.beam.CloudBigtableIO;
+import com.google.cloud.bigtable.beam.CloudBigtableTableConfiguration;
 import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.extensions.gcp.options.GcpOptions;
 import org.apache.beam.sdk.io.TextIO;
+import org.apache.beam.sdk.io.gcp.bigtable.BigtableIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.Create;
 import org.apache.beam.sdk.transforms.ParDo;
@@ -38,9 +42,11 @@ public class AKPFullRefreshWorkflow {
         .apply("Scan Prefix", ParDo.of(new ScanPrefixDoFn(options.getAnaId(), AKPHelper.getArlDiffBigtableConfig(options))));
     //Delete from interface table
     rowKey.apply("Generate ARL Mutation", ParDo.of(new GenerateMutationForArlToPelTableDoFn(arlTranslatorSupplier)))
+        //.apply("Delete ARL Row", CloudBigtableIO.writeToTable(AKPHelper.getArlPelBigtableConfig(options)));
         .apply("Delete ARL Row", CloudBigtableIO.writeToTable(AKPHelper.getArlPelBigtableConfig(options)));
     //Delete from cid table
     rowKey.apply("Generate CID Mutation", ParDo.of(new GenerateMutationForArlDiffTableDoFn()))
+        //.apply("Delete CID Row", CloudBigtableIO.writeToTable(AKPHelper.getArlDiffBigtableConfig(options)));
         .apply("Delete CID Row", CloudBigtableIO.writeToTable(AKPHelper.getArlDiffBigtableConfig(options)));
 
     PCollection<String> lines = pipeline.apply("Read Lines", TextIO.read().from(options.getInputFile()));
@@ -49,5 +55,19 @@ public class AKPFullRefreshWorkflow {
             "File Filter",
             ParDo.of(new ParseAkpLineFn(options.getCidKey(), options.getPreferredPelKey(), options.getInputFile())));
     BigTableInsertFlow.insert(arlTranslatorSupplier, pipeline, processData, options);
+  }
+
+  private static BigtableIO.Write bigTableWriteArlDiff(AkpLoadingOptions options){
+    GcpOptions gcpOptions = PipelineOptionsFactory.as(GcpOptions.class);
+    return BigtableIO.write().withInstanceId(options.getBigtableInstance())
+        .withProjectId(gcpOptions.getProject()).
+            withTableId(options.getArlDiffTable());
+  }
+
+  private static BigtableIO.Write bigTableWriteArlPel(AkpLoadingOptions options){
+    GcpOptions gcpOptions = PipelineOptionsFactory.as(GcpOptions.class);
+    return BigtableIO.write().withInstanceId(options.getBigtableInstance())
+        .withProjectId(gcpOptions.getProject()).
+            withTableId(options.getArlPelTable());
   }
 }

@@ -12,17 +12,17 @@ public class AKPHelper {
   public static final String BIGTABLE_SEPARATOR = "#";
   public static final String PREFERRED_PEL_KEY = "LRI_DER_LRI_SHA256_EMAIL1";
 
-  private static final String INSTANCE_ID = "pixel-serving";
-  private static final String PROJECT_ID = "eu-central-prod";
+  public static final String INSTANCE_ID = "pixel-serving";
+  public static final String PROJECT_ID = "eu-central-prod";
   public static final String COLUMN_FAMILY = "pel";
   public static final String COLUMN_QUALIFIER = "pel";
-  private static final String ARL_DIFF_TABLE = "arl_diff";
-  private static final String ARL_PEL_TABLE = "arl_to_pel";
+  public static final String ARL_DIFF_TABLE = "arl_diff";
+  public static final String ARL_PEL_TABLE = "arl_to_pel";
 
   public static CloudBigtableTableConfiguration getArlPelBigtableConfig(AkpLoadingOptions akpLoadingOptions) {
     GcpOptions gcpOptions = PipelineOptionsFactory.as(GcpOptions.class);
     return new CloudBigtableTableConfiguration.Builder()
-        .withProjectId(gcpOptions.getProject())
+        .withProjectId(akpLoadingOptions.getProjectId())
         .withInstanceId(akpLoadingOptions.getBigtableInstance())
         .withTableId(akpLoadingOptions.getArlPelTable())
         .build();
@@ -31,7 +31,7 @@ public class AKPHelper {
   public static CloudBigtableTableConfiguration getArlDiffBigtableConfig(AkpLoadingOptions akpLoadingOptions) {
     GcpOptions gcpOptions = PipelineOptionsFactory.as(GcpOptions.class);
     return new CloudBigtableTableConfiguration.Builder()
-        .withProjectId(gcpOptions.getProject())
+        .withProjectId(akpLoadingOptions.getProjectId())
         .withInstanceId(akpLoadingOptions.getBigtableInstance())
         .withTableId(akpLoadingOptions.getArlDiffTable())
         .build();
