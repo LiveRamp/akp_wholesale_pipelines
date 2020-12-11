@@ -9,11 +9,15 @@ import com.liveramp.ingestion.secret.EuSecretGroups;
 import com.liveramp.ingestion.secret.EuSecretNames;
 import com.liveramp.ingestion.secret.SecretProvider;
 import com.liveramp.translation_zone_hashing.CustomIdToArlTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.liveramp.ingestion.secret.EuSecretGroups.TRANSLATOR_SECRETS;
 
 public class ArlTranslatorSupplier implements Supplier<CustomIdToArlTranslator>, Serializable {
   private  final SecretProvider secretProvider;
+  private Logger LOG = LoggerFactory.getLogger(ArlTranslatorSupplier.class);
+
 
   // the key name in EU Central prod instead of EuSecretNames
   // https://console.cloud.google.com/security/secret-manager?folder=&project=eu-central-prod
@@ -24,7 +28,12 @@ public class ArlTranslatorSupplier implements Supplier<CustomIdToArlTranslator>,
 
   @Override
   public CustomIdToArlTranslator get() {
-    String salt = secretProvider.get(ARL_KEY_NAME);
-    return new CustomIdToArlTranslator(salt);
+    String arlSecretVal = secretProvider.get(ARL_KEY_NAME);
+    if (arlSecretVal != null && arlSecretVal.length() > 0){
+      LOG.info("secret - salt obtain successfully. length:{}", arlSecretVal.length());
+    }else{
+      LOG.error("failed to obtain secret - salt!!!!");
+    }
+    return new CustomIdToArlTranslator(arlSecretVal);
   }
 }
