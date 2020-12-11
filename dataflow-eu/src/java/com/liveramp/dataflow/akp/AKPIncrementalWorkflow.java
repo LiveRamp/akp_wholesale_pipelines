@@ -2,6 +2,7 @@ package com.liveramp.dataflow.akp;
 
 import java.util.function.Supplier;
 
+import com.liveramp.dataflow.common.SecretManagerProvider;
 import com.liveramp.ingestion.secret.SecretProvider;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
@@ -17,7 +18,7 @@ import com.liveramp.translation_zone_hashing.CustomIdToArlTranslator;
 
 public class AKPIncrementalWorkflow {
 
-  private static final SecretProvider secretProvider = new SecretProvider(false);
+  private static final SecretManagerProvider secretProvider = SecretManagerProvider.production();
   private static final Supplier<CustomIdToArlTranslator> arlTranslatorSupplier = new ArlTranslatorSupplier(secretProvider);
 
   public static void main(String[] args) {

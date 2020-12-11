@@ -3,7 +3,7 @@ package com.liveramp.dataflow.akp;
 import java.util.function.Supplier;
 
 import com.google.cloud.bigtable.beam.CloudBigtableIO;
-import com.liveramp.ingestion.secret.SecretProvider;
+import com.liveramp.dataflow.common.SecretManagerProvider;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
@@ -23,30 +23,31 @@ import com.liveramp.dataflow.common.AKPHelper;
 import com.liveramp.translation_zone_hashing.CustomIdToArlTranslator;
 
 public class AKPFullRefreshWorkflow {
-  private static final SecretProvider secretProvider = new SecretProvider(false);
-  private static final Supplier<CustomIdToArlTranslator> arlTranslatorSupplier = new ArlTranslatorSupplier(secretProvider);
-  public static void main(String[] args) {
+    private static final SecretManagerProvider secretProvider = SecretManagerProvider.production();
+    private static final Supplier<CustomIdToArlTranslator> arlTranslatorSupplier = new ArlTranslatorSupplier(secretProvider);
 
-    AkpLoadingOptions options = PipelineOptionsFactory.fromArgs(args)
-        .withValidation()
-        .as(AkpLoadingOptions.class);
-    Pipeline pipeline = Pipeline.create(options);
+    public static void main(String[] args) {
 
-    //Scan with prefix(ANA)
-    PCollection<byte[]> rowKey = pipeline.apply(Create.of("Start"))
-        .apply("Scan Prefix", ParDo.of(new ScanPrefixDoFn(options.getAnaId(), AKPHelper.getArlDiffBigtableConfig(options))));
-    //Delete from interface table
-    rowKey.apply("Generate ARL Mutation", ParDo.of(new GenerateMutationForArlToPelTableDoFn(arlTranslatorSupplier)))
-        .apply("Delete ARL Row", CloudBigtableIO.writeToTable(AKPHelper.getArlPelBigtableConfig(options)));
-    //Delete from cid table
-    rowKey.apply("Generate CID Mutation", ParDo.of(new GenerateMutationForArlDiffTableDoFn()))
-        .apply("Delete CID Row", CloudBigtableIO.writeToTable(AKPHelper.getArlDiffBigtableConfig(options)));
+        AkpLoadingOptions options = PipelineOptionsFactory.fromArgs(args)
+                .withValidation()
+                .as(AkpLoadingOptions.class);
+        Pipeline pipeline = Pipeline.create(options);
 
-    PCollection<String> lines = pipeline.apply("Read Lines", TextIO.read().from(options.getInputFile()));
-    PCollection<KV<String, String>> processData = lines.apply("Wait Delete", Wait.on(rowKey))
-        .apply(
-            "File Filter",
-            ParDo.of(new ParseAkpLineFn(options.getCidKey(), options.getPreferredPelKey(), options.getInputFile())));
-    BigTableInsertFlow.insert(arlTranslatorSupplier, pipeline, processData, options);
-  }
+        //Scan with prefix(ANA)
+        PCollection<byte[]> rowKey = pipeline.apply(Create.of("Start"))
+                .apply("Scan Prefix", ParDo.of(new ScanPrefixDoFn(options.getAnaId(), AKPHelper.getArlDiffBigtableConfig(options))));
+        //Delete from interface table
+        rowKey.apply("Generate ARL Mutation", ParDo.of(new GenerateMutationForArlToPelTableDoFn(arlTranslatorSupplier)))
+                .apply("Delete ARL Row", CloudBigtableIO.writeToTable(AKPHelper.getArlPelBigtableConfig(options)));
+        //Delete from cid table
+        rowKey.apply("Generate CID Mutation", ParDo.of(new GenerateMutationForArlDiffTableDoFn()))
+                .apply("Delete CID Row", CloudBigtableIO.writeToTable(AKPHelper.getArlDiffBigtableConfig(options)));
+
+        PCollection<String> lines = pipeline.apply("Read Lines", TextIO.read().from(options.getInputFile()));
+        PCollection<KV<String, String>> processData = lines.apply("Wait Delete", Wait.on(rowKey))
+                .apply(
+                        "File Filter",
+                        ParDo.of(new ParseAkpLineFn(options.getCidKey(), options.getPreferredPelKey(), options.getInputFile())));
+        BigTableInsertFlow.insert(arlTranslatorSupplier, pipeline, processData, options);
+    }
 }
