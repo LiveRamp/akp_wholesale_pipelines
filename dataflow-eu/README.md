@@ -71,47 +71,6 @@ The process is the same for both, with different parameter values.
 bit, you should see something like following:
 `16:13:10.060 [com.liveramp.dataflow.akp.AKPFullRefreshWorkflow.main()] INFO org.apache.beam.runners.dataflow.DataflowRunner - Template successfully created.`
 
-#### Full Refresh
-```
-BUCKET_NAME=dataflow-staging-europe-west1-1013940921430
-SUBNET=international-gramercy-europe-west1-01
-REGION=europe-west1
-PROJECT_ID=international-gramercy
-GCS_TEMP_LOCATION=gs://$BUCKET_NAME/akp_templates/full_refresh/temp
-GCS_TEMPLATE_LOCATION=gs://$BUCKET_NAME/akp_templates/full_refresh/job_template.json
-GCS_STAGING_LOCATION=gs://$BUCKET_NAME/akp_templates/full_refresh/staging
-NUM_OF_MAX_WORKERS=10
-
-mvn compile exec:java -Dexec.mainClass=com.liveramp.dataflow.akp.AKPFullRefreshWorkflow -Dexec.args="--runner=DataflowRunner \
-                               --project=$PROJECT_ID \
-                               --region=$REGION \
-                               --stagingLocation=$GCS_STAGING_LOCATION \
-                               --templateLocation=$GCS_TEMPLATE_LOCATION \
-                               --tempLocation=$GCS_TEMP_LOCATION \
-								  --subnetwork=https://www.googleapis.com/compute/v1/projects/$PROJECT_ID/regions/$REGION/subnetworks/$SUBNET \
-                               --usePublicIps=false"
-```
-
-#### Incremental
-```
-BUCKET_NAME=dataflow-staging-europe-west1-1013940921430
-SUBNET=international-gramercy-europe-west1-01
-PROJECT_ID=international-gramercy
-REGION=europe-west1
-GCS_TEMP_LOCATION=gs://$BUCKET_NAME/akp_templates/incremental/temp
-GCS_TEMPLATE_LOCATION=gs://$BUCKET_NAME/akp_templates/incremental/job_template.json
-GCS_STAGING_LOCATION=gs://$BUCKET_NAME/akp_templates/incremental/staging
-NUM_OF_MAX_WORKERS=10
-
-mvn compile exec:java -Dexec.mainClass=com.liveramp.dataflow.akp.AKPIncrementalWorkflow -Dexec.args="--runner=DataflowRunner \
-                               --project=$PROJECT_ID \
-                               --region=$REGION \
-                               --stagingLocation=$GCS_STAGING_LOCATION \
-                               --templateLocation=$GCS_TEMPLATE_LOCATION \
-                               --tempLocation=$GCS_TEMP_LOCATION \
-								  --subnetwork=https://www.googleapis.com/compute/v1/projects/$PROJECT_ID/regions/$REGION/subnetworks/$SUBNET \
-                               --usePublicIps=false"
-```
 
 ### Testing Audience Key Publishing Manually
 You can manually kick off an audience key publishing job from your console after creating the template (as described above).

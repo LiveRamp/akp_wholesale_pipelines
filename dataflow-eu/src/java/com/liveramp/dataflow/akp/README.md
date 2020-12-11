@@ -25,7 +25,8 @@ mvn compile exec:java -Dexec.mainClass=com.liveramp.dataflow.akp.AKPIncrementalW
 --templateLocation=gs://com-liveramp-akp-dataflow-templates/incremental/job_template \
 --tempLocation=gs://com-liveramp-akp-dataflow-templates/incremental/temp \
 --subnetwork=https://www.googleapis.com/compute/v1/projects/eu-central-prod/regions/europe-west1/subnetworks/eu-central-prod-dataflow-1 \
---usePublicIps=false"
+--usePublicIps=false \
+--serviceAccount=akp-wholesale@eu-central-prod.iam.gserviceaccount.com"
 ```
 
 2.DF job kick off 
@@ -60,7 +61,8 @@ mvn compile exec:java -Dexec.mainClass=com.liveramp.dataflow.akp.AKPFullRefreshW
 --templateLocation=gs://com-liveramp-akp-dataflow-templates/full_refresh/job_template \
 --tempLocation=gs://com-liveramp-akp-dataflow-templates/full_refresh/temp \
 --subnetwork=https://www.googleapis.com/compute/v1/projects/eu-central-prod/regions/europe-west1/subnetworks/eu-central-prod-dataflow-1 \
---usePublicIps=false"
+--usePublicIps=false \
+--serviceAccount=akp-wholesale@eu-central-prod.iam.gserviceaccount.com"
 ```
 
 2.DF job kick off
