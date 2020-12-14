@@ -10,25 +10,40 @@ import org.slf4j.LoggerFactory;
 
 
 public class ArlTranslatorSupplier implements Supplier<CustomIdToArlTranslator>, Serializable {
-  private  final SecretManagerProvider secretProvider;
-  private Logger LOG = LoggerFactory.getLogger(ArlTranslatorSupplier.class);
+    private static SecretManagerProvider secretProvider;
+    private static boolean test;
+
+    private Logger LOG = LoggerFactory.getLogger(ArlTranslatorSupplier.class);
 
 
-  // the key name in EU Central prod instead of EuSecretNames
-  // https://console.cloud.google.com/security/secret-manager?folder=&project=eu-central-prod
-  private  static final String ARL_KEY_NAME = "projects/467137229199/secrets/arl-key/versions/1";
-  public ArlTranslatorSupplier(SecretManagerProvider secretProvider) {
-    this.secretProvider = secretProvider;
-  }
+    // the key name in EU Central prod instead of EuSecretNames
+    // https://console.cloud.google.com/security/secret-manager?folder=&project=eu-central-prod
+    private static final String ARL_KEY_NAME = "projects/467137229199/secrets/arl-key/versions/1";
+    private static final String TEST_SECRET_VAL = "ABCD";
 
-  @Override
-  public CustomIdToArlTranslator get() {
-    String arlSecretVal = secretProvider.get(ARL_KEY_NAME);
-    if (arlSecretVal != null && arlSecretVal.length() > 0){
-      LOG.info("Succeded to obtain arlSecretVal. Length:{}", arlSecretVal.length());
-    }else{
-      LOG.error("Failed to obtain arlSecretVal!!!!");
+    public ArlTranslatorSupplier(SecretManagerProvider secretProvider) {
+        this.secretProvider = secretProvider;
     }
-    return new CustomIdToArlTranslator(arlSecretVal);
-  }
+
+    public ArlTranslatorSupplier(boolean test) {
+        this.test = test;
+    }
+
+    @Override
+    public CustomIdToArlTranslator get() {
+        if (!test){
+            String arlSecretVal = secretProvider.get(ARL_KEY_NAME);
+            if (arlSecretVal != null && arlSecretVal.length() > 0) {
+                LOG.info("Succeded to obtain arlSecretVal. Length:{}", arlSecretVal.length());
+            } else {
+                LOG.error("Failed to obtain arlSecretVal!!!!");
+            }
+            return new CustomIdToArlTranslator(arlSecretVal);
+        }else{
+            LOG.info("In test mode. Returning dummy CustomIdToArlTranslator with " +
+                    "dummy secret:{}",TEST_SECRET_VAL );
+            return new CustomIdToArlTranslator(TEST_SECRET_VAL);
+        }
+
+    }
 }
