@@ -6,7 +6,7 @@
 
   <parent>
     <groupId>com.liveramp</groupId>
-    <artifactId>eu_ingestion</artifactId>
+    <artifactId>akp_wholesale_pipelines</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
@@ -20,6 +20,8 @@
     <checkstyle.fail.on.violation>true</checkstyle.fail.on.violation>
     <bigtable.version>1.18.0</bigtable.version>
     <skip.jenkins.artifact.clean>true</skip.jenkins.artifact.clean>
+    <beam.version>2.22.0</beam.version>
+    <guava.version>27.0-jre</guava.version>
   </properties>
 
   <dependencies>
