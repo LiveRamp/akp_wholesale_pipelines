@@ -31,9 +31,9 @@ public class FRWholesaleLoader {
         .apply("BigtableMutation", ParDo.of(new BigtableMutationsFn()))
         .apply(
             BigtableIO.write()
-                .withProjectId(WholesaleConstants.PROJECT_ID)
-                .withInstanceId(WholesaleConstants.INSTANCE_ID)
-                .withTableId(WholesaleConstants.TABLE_ID));
+                .withProjectId(options.getProjectId())
+                .withInstanceId(options.getInstanceId())
+                .withTableId(options.getTableId()));
 
     pipeline.run();
   }
