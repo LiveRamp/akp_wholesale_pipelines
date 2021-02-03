@@ -41,7 +41,7 @@ public class ClinkToEmailHashDoFn extends DoFn<String, ClinkEmailHashes> {
           if (map.size() == 4) {
             break;
           }
-          String hashType = checkRecordHash(hash);
+          String hashType = checkRecordHash(hash, LOG);
           if (!map.containsKey(SHA1_COLUMN_QUALIFIER) && hashType.equals(SHA1_COLUMN_QUALIFIER)) {
             map.put(SHA1_COLUMN_QUALIFIER, hash);
             continue;
