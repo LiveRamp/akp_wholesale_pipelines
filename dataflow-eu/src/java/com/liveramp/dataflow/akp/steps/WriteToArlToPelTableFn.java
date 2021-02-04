@@ -1,6 +1,6 @@
 package com.liveramp.dataflow.akp.steps;
 
-import java.util.function.Supplier;
+import com.liveramp.dataflow.akp.steps.setup.ArlTranslatorSupplier;
 
 import org.apache.beam.sdk.options.ValueProvider;
 import org.apache.beam.sdk.transforms.DoFn;
@@ -15,14 +15,14 @@ import com.liveramp.types.custom_id.CustomId;
 
 public class WriteToArlToPelTableFn extends DoFn<KV<String, String>, Mutation> {
 
-  private Supplier<CustomIdToArlTranslator> arlTranslatorSupplier;
-  private ValueProvider<String> Ana;
+  private final ArlTranslatorSupplier arlTranslatorSupplier;
+  private final ValueProvider<String> ana;
 
   private CustomIdToArlTranslator translator;
 
-  public WriteToArlToPelTableFn(Supplier<CustomIdToArlTranslator> arlTranslatorSupplier, ValueProvider<String> ana) {
+  public WriteToArlToPelTableFn(ArlTranslatorSupplier arlTranslatorSupplier, ValueProvider<String> ana) {
     this.arlTranslatorSupplier = arlTranslatorSupplier;
-    Ana = ana;
+    this.ana = ana;
   }
 
   @Setup
@@ -32,7 +32,7 @@ public class WriteToArlToPelTableFn extends DoFn<KV<String, String>, Mutation> {
 
   @ProcessElement
   public void processElement(ProcessContext c) {
-    Arl arl = translator.apply(new CustomId(Integer.parseInt(Ana.get()), c.element().getKey()));
+    Arl arl = translator.apply(new CustomId(Integer.parseInt(this.ana.get()), c.element().getKey()));
     c.output(new Put(arl.get_arl()).addColumn(AKPHelper.COLUMN_FAMILY.getBytes(), AKPHelper.COLUMN_QUALIFIER.getBytes(),
         c.element().getValue().getBytes()));
   }

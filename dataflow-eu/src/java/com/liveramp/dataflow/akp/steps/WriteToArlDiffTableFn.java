@@ -11,15 +11,15 @@ import com.liveramp.dataflow.common.AKPHelper;
 
 public class WriteToArlDiffTableFn extends DoFn<KV<String, String>, Mutation> {
 
-  private ValueProvider<String> Ana;
+  private final ValueProvider<String> ana;
 
-  public WriteToArlDiffTableFn(ValueProvider<String> Ana) {
-    this.Ana = Ana;
+  public WriteToArlDiffTableFn(ValueProvider<String> ana) {
+    this.ana = ana;
   }
 
   @ProcessElement
   public void processElement(ProcessContext c) {
-    String pel = Ana + AKPHelper.BIGTABLE_SEPARATOR + c.element().getKey();
+    String pel = this.ana + AKPHelper.BIGTABLE_SEPARATOR + c.element().getKey();
     c.output(new Put(pel.getBytes())
         .addColumn(AKPHelper.COLUMN_FAMILY.getBytes(), AKPHelper.COLUMN_QUALIFIER.getBytes(),
             c.element().getValue().getBytes()));

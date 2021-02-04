@@ -17,9 +17,9 @@ import com.liveramp.ingestion.config.EuFileConfigurationUtils;
 
 public class ParseAkpLineFn extends DoFn<String, KV<String, String>> {
 
-  private ValueProvider<String> cidKey;
-  private ValueProvider<String> preferredPelKey;
-  private ValueProvider<String> filePath;
+  private final ValueProvider<String> cidKey;
+  private final ValueProvider<String> preferredPelKey;
+  private final ValueProvider<String> filePath;
 
   private Splitter.MapSplitter keyValueSplitter;
 
