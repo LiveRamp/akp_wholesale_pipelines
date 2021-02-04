@@ -10,14 +10,12 @@ import org.slf4j.LoggerFactory;
 
 
 public class ArlTranslatorSupplier implements Supplier<CustomIdToArlTranslator>, Serializable {
-    private static SecretManagerProvider secretProvider;
-    private static boolean test;
 
-    private Logger LOG = LoggerFactory.getLogger(ArlTranslatorSupplier.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ArlTranslatorSupplier.class);
 
+    private SecretManagerProvider secretProvider;
+    private boolean test;
 
-    // the key name in EU Central prod instead of EuSecretNames
-    // https://console.cloud.google.com/security/secret-manager?folder=&project=eu-central-prod
     private static final String ARL_KEY_NAME = "projects/467137229199/secrets/arl-key/versions/1";
     private static final String TEST_SECRET_VAL = "ABCD";
 

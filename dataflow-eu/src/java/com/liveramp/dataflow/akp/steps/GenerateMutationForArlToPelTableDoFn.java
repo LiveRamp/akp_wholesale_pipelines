@@ -1,6 +1,6 @@
 package com.liveramp.dataflow.akp.steps;
 
-import java.util.function.Supplier;
+import com.liveramp.dataflow.akp.steps.setup.ArlTranslatorSupplier;
 
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.hadoop.hbase.client.Delete;
@@ -13,11 +13,11 @@ import com.liveramp.types.custom_id.CustomId;
 
 public class GenerateMutationForArlToPelTableDoFn extends DoFn<byte[], Mutation> {
 
-  private final Supplier<CustomIdToArlTranslator> arlTranslatorSupplier;
+  private final ArlTranslatorSupplier arlTranslatorSupplier;
 
   private CustomIdToArlTranslator translator;
 
-  public GenerateMutationForArlToPelTableDoFn(Supplier<CustomIdToArlTranslator> arlTranslatorSupplier) {
+  public GenerateMutationForArlToPelTableDoFn(ArlTranslatorSupplier arlTranslatorSupplier) {
     this.arlTranslatorSupplier = arlTranslatorSupplier;
   }
 

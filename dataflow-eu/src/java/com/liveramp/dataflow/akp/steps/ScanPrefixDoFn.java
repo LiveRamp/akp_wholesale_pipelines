@@ -15,11 +15,11 @@ import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 
 public class ScanPrefixDoFn extends DoFn<String, byte[]> {
 
-  private CloudBigtableTableConfiguration cidTableConfiguration;
-  private ValueProvider<String> Ana;
+  private final CloudBigtableTableConfiguration cidTableConfiguration;
+  private ValueProvider<String> ana;
 
-  public ScanPrefixDoFn(ValueProvider<String> Ana, CloudBigtableTableConfiguration cidTableConfiguration) {
-    this.Ana = Ana;
+  public ScanPrefixDoFn(ValueProvider<String> ana, CloudBigtableTableConfiguration cidTableConfiguration) {
+    this.ana = ana;
     this.cidTableConfiguration = cidTableConfiguration;
   }
 
@@ -27,7 +27,7 @@ public class ScanPrefixDoFn extends DoFn<String, byte[]> {
   public void processElement(ProcessContext c) throws IOException {
     Connection connection = BigtableConfiguration.connect(cidTableConfiguration.toHBaseConfig());
     Scan scan = new Scan()
-        .setRowPrefixFilter(Ana.get().getBytes())
+        .setRowPrefixFilter(this.ana.get().getBytes())
         .setTimeStamp(0)
         .setFilter(new KeyOnlyFilter());
     Table table = connection.getTable(TableName.valueOf(cidTableConfiguration.getTableId()));
