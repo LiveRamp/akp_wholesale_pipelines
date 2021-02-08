@@ -34,14 +34,14 @@ public class ClinkToEmailHashDoFn extends DoFn<String, ClinkEmailHashes> {
         Map<String, String> map = new HashMap<>();
         map.put("clink", parsedLine[0]); //assumption clink will always be at 0 index in record
 
-        List<String> records = IntStream.range(1, parsedLine.length - 1)
+        List<String> records = IntStream.range(1, parsedLine.length)
             .mapToObj(value -> parsedLine[value].trim()).collect(Collectors.toList());
 
         for (String hash : records) {
           if (map.size() == 4) {
             break;
           }
-          String hashType = checkRecordHash(hash);
+          String hashType = checkRecordHash(hash, LOG);
           if (!map.containsKey(SHA1_COLUMN_QUALIFIER) && hashType.equals(SHA1_COLUMN_QUALIFIER)) {
             map.put(SHA1_COLUMN_QUALIFIER, hash);
             continue;
@@ -66,13 +66,16 @@ public class ClinkToEmailHashDoFn extends DoFn<String, ClinkEmailHashes> {
     }
   }
 
-  private static String checkRecordHash(String hash) {
+  private static String checkRecordHash(String hash, Logger LOG) {
     switch (hash.length()) {
       case 64:
+        LOG.debug("SHA256 hash detected");
         return SHA256_COLUMN_QUALIFIER;
       case 40:
+        LOG.debug("SHA1 hash detected");
         return SHA1_COLUMN_QUALIFIER;
       case 32:
+        LOG.debug("MD5 hash detected");
         return MD5_COLUMN_QUALIFIER;
     }
     return StringUtils.EMPTY;
