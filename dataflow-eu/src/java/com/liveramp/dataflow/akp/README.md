@@ -36,7 +36,7 @@ Provide the details of parameters while launching the job.
 Parameters
 - PROJECT_ID=<project name where job needs to be run ideally eu-central-prod>
 - ANA_ID=<ana id>
-- INPUT_FILE=<input file to be processed>
+- INPUT_FILE=<path to file in gcs bucket>
 - CID_KEY=<cid key>
 - BIGTABLE_INSTANCE=<BIG_TABLE_INSTANCE where tables present example : pixel-serving for eu-central-prod> 
 - ARL_DIFF_TABLE=<arl_diff table name example: arl_diff for eu-central-prod>
@@ -73,7 +73,7 @@ Provide the details of parameters while launching the job.
 Parameters
 - PROJECT_ID=<project name where job needs to be run ideally eu-central-prod>
 - ANA_ID=<ana id>
-- INPUT_FILE=<input file to be processed>
+- INPUT_FILE=<path to file in gcs bucket>
 - CID_KEY=<cid key>
 - BIGTABLE_INSTANCE=<BIG_TABLE_INSTANCE where tables present example : pixel-serving for eu-central-prod>
 - ARL_DIFF_TABLE=<arl_diff table name example: arl_diff for eu-central-prod>
