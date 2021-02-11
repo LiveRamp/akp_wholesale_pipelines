@@ -34,20 +34,20 @@ mvn compile exec:java -Dexec.mainClass=com.liveramp.dataflow.akp.AKPIncrementalW
 Provide the details of parameters while launching the job.
 
 Parameters
-- ANA_ID
-- inputFile=<INPUT_FILE to be process>
-- cidKey=<CID_KEY>
-- bigtableInstance=<BIG_TABLE_INSTANCE where tables present example : pixel-serving for eu-central-prod> 
-- arlDiffTable=<arl_diff table name example: arl_diff for eu-central-prod>,
-- arlPelTable=<arl_pel table name example: arl_pel for eu-central-prod>,
-- projectId=<project name where job needs to be run ideally eu-central-prod>
+- PROJECT_ID=<project name where job needs to be run ideally eu-central-prod>
+- ANA_ID=<ana id>
+- INPUT_FILE=<path to file in gcs bucket>
+- CID_KEY=<cid key>
+- BIGTABLE_INSTANCE=<BIG_TABLE_INSTANCE where tables present example : pixel-serving for eu-central-prod> 
+- ARL_DIFF_TABLE=<arl_diff table name example: arl_diff for eu-central-prod>
+- ARL_PEL_TABLE=<arl_pel table name example: arl_pel for eu-central-prod>
 
 
 ```$xslt
 gcloud dataflow jobs run <incremental-job-name> \
   --region=europe-west1 \
   --gcs-location=gs://com-liveramp-akp-dataflow-templates/incremental/job_template \
-  --parameters anaId=<ANA_ID>,inputFile=<INPUT_FILE>,cidKey=<CID_KEY>,bigtableInstance=<BIG_TABLE_INSTANCE>,arlDiffTable=<arl_diff table>,arlPelTable=<arl_pel table>,projectId=<project name>
+  --parameters anaId=$ANA_ID,inputFile=$INPUT_FILE,cidKey=$CID_KEY,bigtableInstance=$BIGTABLE_INSTANCE,arlDiffTable=$ARL_DIFF_TABLE,arlPelTable=$ARL_PEL_TABLE,projectId=$PROJECT_ID
 ```
 
 ### Full refresh
@@ -71,18 +71,25 @@ Provide the details of parameters while launching the job.
 
 
 Parameters
-- ANA_ID
-- inputFile=<INPUT_FILE to be process>
-- cidKey=<CID_KEY>
-- bigtableInstance=<BIG_TABLE_INSTANCE where tables present example : pixel-serving for eu-central-prod> 
-- arlDiffTable=<arl_diff table name example: arl_diff for eu-central-prod>,
-- arlPelTable=<arl_pel table name example: arl_pel for eu-central-prod>,
-- projectId=<project name where job needs to be run ideally eu-central-prod>
+- PROJECT_ID=<project name where job needs to be run ideally eu-central-prod>
+- ANA_ID=<ana id>
+- INPUT_FILE=<path to file in gcs bucket>
+- CID_KEY=<cid key>
+- BIGTABLE_INSTANCE=<BIG_TABLE_INSTANCE where tables present example : pixel-serving for eu-central-prod>
+- ARL_DIFF_TABLE=<arl_diff table name example: arl_diff for eu-central-prod>
+- ARL_PEL_TABLE=<arl_pel table name example: arl_pel for eu-central-prod>
 
 
 ```$xslt
 gcloud dataflow jobs run <full-refresh-job-name> \
   --region=europe-west1 \
   --gcs-location=gs://com-liveramp-akp-dataflow-templates/full_refresh/job_template \
-  --parameters anaId=<ANA_ID>,inputFile=<INPUT_FILE>,cidKey=<CID_KEY>,bigtableInstance=<BIG_TABLE_INSTANCE>,arlDiffTable=<arl_diff table>,arlPelTable=<arl_pel table>,projectId=<project name>
+  --parameters anaId=$ANA_ID,inputFile=$INPUT_FILE,cidKey=$CID_KEY,bigtableInstance=$BIGTABLE_INSTANCE,arlDiffTable=$ARL_DIFF_TABLE,arlPelTable=$ARL_PEL_TABLE,projectId=$PROJECT_ID
+```
+
+
+### Expected data input format:
+```$xslt
+ISE_HASH=aaa,PEL=bbb
+ISE_HASH=ccc,PEL=ddd
 ```
