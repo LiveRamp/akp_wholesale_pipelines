@@ -86,3 +86,10 @@ gcloud dataflow jobs run <full-refresh-job-name> \
   --gcs-location=gs://com-liveramp-akp-dataflow-templates/full_refresh/job_template \
   --parameters anaId=<ANA_ID>,inputFile=<INPUT_FILE>,cidKey=<CID_KEY>,bigtableInstance=<BIG_TABLE_INSTANCE>,arlDiffTable=<arl_diff table>,arlPelTable=<arl_pel table>,projectId=<project name>
 ```
+
+
+### Expected data input format:
+```$xslt
+ISE_HASH=aaa,PEL=bbb
+ISE_HASH=ccc,PEL=ddd
+```
