@@ -151,7 +151,7 @@ public class ConvertRawToArlPel {
             receiver.output(element.getKey() + "|" + element.getValue());
           }
         }))
-        .apply("writeOutput", TextIO.write().to(options.getOutputFile()));
+        .apply("writeOutput", TextIO.write().to(options.getOutputFile()).withNumShards(1));
   }
 
   public static void main(String[] args) throws IOException {
