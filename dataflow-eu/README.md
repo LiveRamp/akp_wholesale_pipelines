@@ -168,11 +168,13 @@ gcloud config set project $PROJECT_ID
 
 Generate template
 ```
-mvn compile exec:java \
+cd ~/code/akp_wholesale_pipelines/dataflow-eu
+mvn clean compile exec:java \
 -X \
 -Dexec.mainClass=com.liveramp.dataflow.arlpel.ConvertRawToArlPel \
 -Dexec.args="--runner=DataflowRunner \
 --project=$PROJECT_ID \
+--region=europe-west1 \
 --stagingLocation=$GCS_STAGING_LOCATION \
 --templateLocation=$GCS_TEMPLATE_LOCATION \
 --tempLocation=$GCS_TEMP_LOCATION \
@@ -189,21 +191,21 @@ as long as you see "Template successfully created." )
 Dataflow job setup
 
 ```
-JOB_NAME=<a meaning full name for the job>
+JOB_NAME=<a meaning full name for the job>__
 ZONE=europe-west1-b
-DATAFLOW_SVC=svc-dataflow-gramercy@international-gramercy.iam.gserviceaccount.com
+DATAFLOW_SVC=svc-tf-dataflow-gramercy@international-gramercy.iam.gserviceaccount.com
 
 #GCS path for input HashedEmail->Clink
 GCS_INPUT_FILE=gs://com-liveramp-eu-pii-bucket/Hashed_Emails_UK_20180627195902.out.gz
 
 #GCS path for Dataflow job output file
 GCS_OUTPUT_FILE=gs://eu-central-prod-anonymous-mappings/bigtable
+
 ```
 
 ```
-gcloud dataflow jobs run $JOB_NAME --gcs-location=$GCS_TEMPLATE_LOCATION --zone=$ZONE --service-account-email=$DATAFLOW_SVC --parameters inputFile=$GCS_INPUT_FILE,outputFile=$GCS_OUTPUT_FILE
+gcloud dataflow jobs run $JOB_NAME --gcs-location=$GCS_TEMPLATE_LOCATION --worker-zone=$ZONE --service-account-email=$DATAFLOW_SVC --region=europe-west1 --parameters inputFile=$GCS_INPUT_FILE,outputFile=$GCS_OUTPUT_FILE 
 ```
-
 It takes about 40min for the job to finish. Output file will be found in gcs defined in GCS_OUTPUT_FILE
 
 ### Step3: Create Cloud Dataflow template for loading ARL->PEL to big table
