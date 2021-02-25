@@ -139,6 +139,6 @@ public class LoadArlPelBigtable {
     writeArlPelToBigtable(arlPelMapping, options.getBigTableTableName(), options.getBigtableColumnFamily(),
         options.getProjectId(), options.getBigTableInstanceId());
 
-    p.run().waitUntilFinish();
+    p.run();
   }
 }
