@@ -237,11 +237,12 @@ gcloud config set project $PROJECT_ID
 
 Generate template
 ```
-mvn compile exec:java \
+mvn clean compile exec:java \
 -X \
 -Dexec.mainClass=com.liveramp.dataflow.arlpel.LoadArlPelBigtable \
 -Dexec.args="--runner=DataflowRunner \
 --project=$PROJECT_ID \
+--region=europe-west1 \
 --stagingLocation=$GCS_STAGING_LOCATION \
 --templateLocation=$GCS_TEMPLATE_LOCATION \
 --tempLocation=$GCS_TEMP_LOCATION \
