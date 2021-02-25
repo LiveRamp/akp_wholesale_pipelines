@@ -174,7 +174,7 @@ public class ConvertRawToArlPel {
 
     writeArlPelMapping(arlPelMapping, options);
 
-    p.run().waitUntilFinish();
+    p.run();
   }
 
 
