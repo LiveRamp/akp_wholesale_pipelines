@@ -18,6 +18,7 @@ import com.google.cloud.bigtable.config.CredentialOptions;
 import com.google.cloud.bigtable.grpc.BigtableDataClient;
 import com.google.cloud.bigtable.grpc.BigtableSession;
 import com.google.cloud.bigtable.grpc.BigtableTableAdminClient;
+import org.apache.beam.sdk.options.ValueProvider;
 import org.apache.beam.sdk.testing.TestPipeline;
 import org.apache.beam.sdk.transforms.Create;
 import org.apache.beam.sdk.transforms.ParDo;
@@ -119,8 +120,9 @@ public class PiiExpansionDataLoaderTest {
 
     KeyedPCollectionTuple.of(emailTag, emails).and(phoneTag, phones)
         .apply("Combine Phone and Email data", CoGroupByKey.create())
-        .apply("PiiExpansion Mapping", ParDo.of(new PiiExpansionMappingFn(phoneTag, emailTag, region)))
-        .apply("Write to BigTable", ParDo.of(testBigTableWriterFn(projectId, instanceId, tableId, jobTimestamp)));
+        .apply("PiiExpansion Mapping", ParDo.of(new PiiExpansionMappingFn(phoneTag, emailTag,
+            ValueProvider.StaticValueProvider.of(region))))
+        .apply("Write to BigTable", ParDo.of(testBigTableWriterFn(ValueProvider.StaticValueProvider.of(projectId), ValueProvider.StaticValueProvider.of(instanceId), ValueProvider.StaticValueProvider.of(tableId), jobTimestamp)));
 
     pipeline.run().waitUntilFinish();
 

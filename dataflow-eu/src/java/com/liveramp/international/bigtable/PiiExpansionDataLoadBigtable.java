@@ -53,9 +53,9 @@ public class PiiExpansionDataLoadBigtable {
 
     final TupleTag<String> phoneTag;
     final TupleTag<String> emailTag;
-    final String region;
+    final ValueProvider<String> region;
 
-    public PiiExpansionMappingFn(TupleTag<String> phoneTag, TupleTag<String> emailTag, String region) {
+    public PiiExpansionMappingFn(TupleTag<String> phoneTag, TupleTag<String> emailTag, ValueProvider<String> region) {
       this.phoneTag = phoneTag;
       this.emailTag = emailTag;
       this.region = region;
@@ -82,7 +82,7 @@ public class PiiExpansionDataLoadBigtable {
         ProcessContext c, Iterable<String> mainHashIter, Iterable<String> secondaryHashIter,
         String mainColumnFamily, String secondaryColumnFamily, String hashForRowKey) {
 
-      String rowKeyPrefix = region + "#" + mainColumnFamily + "#";
+      String rowKeyPrefix = region.get() + "#" + mainColumnFamily + "#";
       Map<String, String> piiExpansions = new HashMap<>();
       String rowKey = rowKeyPrefix + hashForRowKey;
 
@@ -108,25 +108,25 @@ public class PiiExpansionDataLoadBigtable {
 
     private static final Logger LOG = LoggerFactory.getLogger(BigTableWriterFn.class);
 
-    private final String projectId;
-    private final String instanceId;
+    private final ValueProvider<String> projectId;
+    private final ValueProvider<String> instanceId;
     private final boolean isTest;
-    final String tableId;
+    final ValueProvider<String> tableId;
     private final long jobTimestamp;
 
     BigtableDataClient dataClient;
 
     public static BigTableWriterFn testBigTableWriterFn(
-        String projectId, String instanceId, String tableId, long jobTimestamp) {
+        ValueProvider<String> projectId, ValueProvider<String> instanceId, ValueProvider<String> tableId, long jobTimestamp) {
       return new BigTableWriterFn(projectId, instanceId, tableId, jobTimestamp, true);
     }
 
     static BigTableWriterFn prodBigTableWriterFn(
-        String projectId, String instanceId, String tableId, long jobTimestamp) {
+        ValueProvider<String> projectId, ValueProvider<String> instanceId, ValueProvider<String> tableId, long jobTimestamp) {
       return new BigTableWriterFn(projectId, instanceId, tableId, jobTimestamp, false);
     }
 
-    private BigTableWriterFn(String projectId, String instanceId, String tableId, long jobTimestamp, boolean isTest) {
+    private BigTableWriterFn(ValueProvider<String> projectId, ValueProvider<String> instanceId, ValueProvider<String> tableId, long jobTimestamp, boolean isTest) {
       this.projectId = projectId;
       this.instanceId = instanceId;
       this.tableId = tableId;
@@ -142,7 +142,7 @@ public class PiiExpansionDataLoadBigtable {
 
       LOG.debug("Number of hashes to ADD: " + hashesToAdd.size());
       if (hashesToAdd.size() > 0) {
-        RowMutation rowMutation = RowMutation.create(this.tableId, rowKey);
+        RowMutation rowMutation = RowMutation.create(this.tableId.get(), rowKey);
 
         hashesToAdd.forEach((hashValue, hashType) -> {
           LOG.debug("RK: " + rowKey + " HT: " + hashType + " HV: " + hashValue + " Timestamp: " + jobTimestamp + "");
@@ -159,14 +159,14 @@ public class PiiExpansionDataLoadBigtable {
       if (isTest) {
         LOG.info("Creating Test Data client");
         this.dataClient = BigtableDataClient.create(BigtableDataSettings.newBuilderForEmulator("127.0.0.1", 8086)
-            .setProjectId(projectId)
-            .setInstanceId(instanceId)
+            .setProjectId(projectId.get())
+            .setInstanceId(instanceId.get())
             .build());
       } else {
         LOG.info("Creating BigTable Data client for: " + projectId + " : " + instanceId + " : " + tableId);
         this.dataClient = BigtableDataClient.create(BigtableDataSettings.newBuilder()
-            .setProjectId(projectId)
-            .setInstanceId(instanceId)
+            .setProjectId(projectId.get())
+            .setInstanceId(instanceId.get())
             .build());
       }
     }
@@ -209,10 +209,10 @@ public class PiiExpansionDataLoadBigtable {
     final TupleTag<String> phoneTag = new TupleTag<>();
     final TupleTag<String> emailTag = new TupleTag<>();
 
-    final String projectId = options.getProjectId().toString();
+    /*final String projectId = options.getProjectId();
     final String instanceId = options.getBigTableInstanceId().toString();
     final String tableId = options.getTableId().toString();
-    final String region = options.getLrRegion().toString();
+    final String region = options.getLrRegion().toString();*/
 
     long jobTimestamp = System.currentTimeMillis() * 1000;
 
@@ -227,12 +227,12 @@ public class PiiExpansionDataLoadBigtable {
 
     KeyedPCollectionTuple.of(emailTag, emails).and(phoneTag, phones)
         .apply("Combine Phone and Email data", CoGroupByKey.create())
-        .apply("PiiExpansion Mapping", ParDo.of(new PiiExpansionMappingFn(phoneTag, emailTag, region)))
+        .apply("PiiExpansion Mapping", ParDo.of(new PiiExpansionMappingFn(phoneTag, emailTag, options.getLrRegion())))
         .apply(
             "Write to BigTable",
-            ParDo.of(BigTableWriterFn.prodBigTableWriterFn(projectId, instanceId, tableId, jobTimestamp)));
+            ParDo.of(BigTableWriterFn.prodBigTableWriterFn(options.getProjectId(), options.getBigTableInstanceId(), options.getTableId(), jobTimestamp)));
 
-    pipeline.run().waitUntilFinish();
+    pipeline.run();
   }
 }
 
