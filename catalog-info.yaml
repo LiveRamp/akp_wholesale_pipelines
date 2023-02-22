@@ -1,0 +1,14 @@
+# BEGIN TERRAFORM MANAGED BLOCK
+"apiVersion": "backstage.io/v1alpha1"
+"kind": "Location"
+"metadata":
+  "annotations":
+    "github.com/project-slug": "LiveRamp/akp_wholesale_pipelines"
+    "github.com/team-slug": "LiveRamp/londonengineering"
+  "description": "AKP and Wholesale DataFlow Pipelines"
+  "name": "akp_wholesale_pipelines"
+  "tags":
+  - "akp"
+  - "wholesale"
+"spec": {}
+# END TERRAFORM MANAGED BLOCK  
