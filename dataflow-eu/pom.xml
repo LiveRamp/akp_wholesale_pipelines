@@ -124,7 +124,11 @@
       <artifactId>translation_zone_hashing</artifactId>
       <version>1.0-SNAPSHOT</version>
       <exclusions>
-        <exclusion>
+       <exclusion>
+           <artifactId>log4j-api</artifactId>
+           <groupId>org.apache.logging.log4j</groupId>
+       </exclusion>
+       <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
