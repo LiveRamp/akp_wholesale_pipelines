@@ -33,7 +33,7 @@
         <dependency>
             <artifactId>slf4j-api</artifactId>
             <groupId>org.slf4j</groupId>
-            <version>1.7.25</version>
+            <version>1.7.32</version>
         </dependency>
     </dependencies>
 </project>
